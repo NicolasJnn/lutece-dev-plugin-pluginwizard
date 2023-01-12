@@ -7,8 +7,10 @@
 <#switch template_type>
 <#case 0>
 <#if business_class?? >
+<#if business_classes?size gt 1>
 <${include} "${admin_feature.featureName?lower_case}_tabs.html" />
 <${macro}tabs2 tab="${business_class.businessClass?lower_case}" />
+</#if>
 <${macro}box>
 	<${macro}boxHeader title='${i18n_open}${plugin_name}.create_${business_class.businessClass?lower_case}.title${i18n_close}' />
 	<${macro}boxBody>
@@ -71,8 +73,10 @@
 
 <#case 2>
 <#if business_class?? > 
+<#if business_classes?size gt 1>
 <${include} "${admin_feature.featureName?lower_case}_tabs.html" />
 <${macro}tabs2 tab="${business_class.businessClass?lower_case}" />
+</#if>
 
 <${macro}box>
 	<${macro}boxHeader title='${i18n_open}${plugin_name}.manage_${business_class.businessClass?lower_case}.title${i18n_close}' boxTools=true>

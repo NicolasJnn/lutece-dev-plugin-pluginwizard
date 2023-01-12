@@ -8,8 +8,10 @@
 <#switch template_type>
 
 <#case 0>
+<#if business_classes?size gt 1>
 <${include} "${application.applicationName?lower_case}_tabs.html" />
 <${macro}tabs2 tab="${business_class.businessClass?lower_case}" />
+</#if>
 
 <${macro}box>
 	<${macro}boxHeader title='${i18n_open}${plugin_name}.modify_${business_class.businessClass?lower_case}.title${i18n_close}' />
@@ -41,8 +43,10 @@
 <#break>
 
 <#case 1>
+<#if business_classes?size gt 1>
 <${include} "${application.applicationName?lower_case}_tabs.html" />
 <${macro}tabs2 tab="${business_class.businessClass?lower_case}" />
+</#if>
 
 <${macro}box>
 	<${macro}boxHeader title='${i18n_open}${plugin_name}.modify_${business_class.businessClass?lower_case}.title${i18n_close}' />
@@ -75,9 +79,10 @@
 <#break>
 
 <#case 2>
+<#if business_classes?size gt 1>
 <${include} "${application.applicationName?lower_case}_tabs.html" />
 <${macro}tabs2 tab="${business_class.businessClass?lower_case}" />
-
+</#if>
 <${macro}row>
 	<${macro}columns>
 		<${macro}messages infos=infos />

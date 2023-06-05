@@ -24,8 +24,10 @@
 		<${macro}formGroup labelFor='${attribute.paramName}' labelKey='${i18n_open}${plugin_name}.modify_${business_class.businessClass?lower_case}.label${attribute.name}${i18n_close}' mandatory=true>
         	<#if attribute.type = "File">
           	<${macro}input type='file' id='${attribute.paramName}' name='${attribute.paramName}' <#if attribute.maxLength &gt; 0> maxlength=${attribute.maxLength}</#if> value='${bra_open}${business_class.businessClass?lower_case}.${attribute.name?uncap_first}!\'\'${bra_close}' tabIndex='${attribute_index}' />
-		<#elseif attribute.type = "boolean">
+		<#elseif attribute.type = "boolean">	
           	<${macro}checkBox id="${attribute.paramName}" name="${attribute.paramName}" <#if attribute.maxLength &gt; 0> maxlength=${attribute.maxLength}</#if> value="1" checked=${business_class.businessClass?lower_case}.${attribute.name?uncap_first}!'false' tabIndex='${attribute_index}' />
+		<#elseif attribute.type = "Date">
+          	<${macro}input type='date' id='${attribute.paramName}' name='${attribute.paramName}' <#if attribute.maxLength &gt; 0> maxlength=${attribute.maxLength}</#if> value=${business_class.businessClass?lower_case}.${attribute.name?uncap_first}!'' tabIndex='${attribute_index}' />
 		<#else>
 			<${macro}input type='text' id='${attribute.paramName}' name='${attribute.paramName}' <#if attribute.maxLength &gt; 0> maxlength=${attribute.maxLength}</#if> value='${bra_open}${business_class.businessClass?lower_case}.${attribute.name?uncap_first}!\'\'${bra_close}' tabIndex='${attribute_index}' />
 	    </#if>
@@ -59,6 +61,8 @@
 				<${macro}input type='file' id="${attribute.paramName}" name="${attribute.paramName}" tabIndex="${attribute_index}" showFileUrl=true fileURL="${bra_open}${business_class.businessClass?lower_case}.${attribute.name?uncap_first}.url!${bra_close}" fileName="${bra_open}${business_class.businessClass?lower_case}.${attribute.name?uncap_first}.title!${bra_close}" value="${bra_open}${business_class.businessClass?lower_case}.${attribute.name?uncap_first}.fileKey!\'\'}" />
 			<#elseif attribute.type = "boolean">
 				<${macro}checkBox id="${attribute.paramName}" name="${attribute.paramName}" <#if attribute.maxLength &gt; 0> maxlength=${attribute.maxLength}</#if> value="1" checked=${business_class.businessClass?lower_case}.${attribute.name?uncap_first}!'false' tabIndex='${attribute_index}' />
+			<#elseif attribute.type = "Date">
+          		<${macro}input type='date' id='${attribute.paramName}' name='${attribute.paramName}' <#if attribute.maxLength &gt; 0> maxlength=${attribute.maxLength}</#if> value=${business_class.businessClass?lower_case}.${attribute.name?uncap_first}!'' tabIndex='${attribute_index}' />	
 			<#else>
 				<${macro}input type='text' id='${attribute.paramName}' name='${attribute.paramName}' <#if attribute.maxLength &gt; 0> maxlength=${attribute.maxLength}</#if> value='${bra_open}${business_class.businessClass?lower_case}.${attribute.name?uncap_first}!\'\'${bra_close}' tabIndex='${attribute_index}' />
 			</#if>

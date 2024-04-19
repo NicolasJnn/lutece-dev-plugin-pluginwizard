@@ -155,6 +155,7 @@ public class ${business_class.businessClass?cap_first}Rest
      */
     private Response create${business_class.businessClass?cap_first}V1( <#list business_class.attributes as attribute>String ${attribute.paramName?lower_case}<#if attribute_has_next>, </#if></#list> )
     {
+    	<#if business_class.attributes?has_content>
         if ( <#list business_class.attributes as attribute>StringUtils.isEmpty( ${attribute.paramName?lower_case} )<#if attribute_has_next> || </#if></#list> )
         {
             AppLogService.error( Constants.ERROR_BAD_REQUEST_EMPTY_PARAMETER );
@@ -162,7 +163,7 @@ public class ${business_class.businessClass?cap_first}Rest
                     .entity( JsonUtil.buildJsonResponse( new ErrorJsonResponse( Response.Status.BAD_REQUEST.name( ), Constants.ERROR_BAD_REQUEST_EMPTY_PARAMETER ) ) )
                     .build( );
         }
-        
+        </#if>
         ${business_class.businessClass?cap_first} ${business_class.businessClass?lower_case} = new ${business_class.businessClass?cap_first}( );
         <#list business_class.attributes as attribute>
         	<#if attribute.type != 'File'>
@@ -209,7 +210,7 @@ public class ${business_class.businessClass?cap_first}Rest
     {
         if ( nVersion == VERSION_1 )
         {
-            return modify${business_class.businessClass?cap_first}V1( id, <#list business_class.attributes as attribute>${attribute.paramName?lower_case}<#if attribute_has_next>, </#if></#list> );
+            return modify${business_class.businessClass?cap_first}V1( id<#list business_class.attributes as attribute>, ${attribute.paramName?lower_case}</#list> );
         }
         AppLogService.error( Constants.ERROR_NOT_FOUND_VERSION );
         return Response.status( Response.Status.NOT_FOUND )
@@ -225,8 +226,9 @@ public class ${business_class.businessClass?cap_first}Rest
     </#list>
      * @return the ${business_class.businessClass?cap_first} if modified for the version 1
      */
-    private Response modify${business_class.businessClass?cap_first}V1( Integer id, <#list business_class.attributes as attribute>String ${attribute.paramName?lower_case}<#if attribute_has_next>, </#if></#list> )
+    private Response modify${business_class.businessClass?cap_first}V1( Integer id<#list business_class.attributes as attribute>, String ${attribute.paramName?lower_case}</#list> )
     {
+    	<#if business_class.attributes?has_content>
         if ( <#list business_class.attributes as attribute>StringUtils.isEmpty( ${attribute.paramName?lower_case} )<#if attribute_has_next> || </#if></#list> )
         {
             AppLogService.error( Constants.ERROR_BAD_REQUEST_EMPTY_PARAMETER );
@@ -234,7 +236,7 @@ public class ${business_class.businessClass?cap_first}Rest
                     .entity( JsonUtil.buildJsonResponse( new ErrorJsonResponse( Response.Status.BAD_REQUEST.name( ), Constants.ERROR_BAD_REQUEST_EMPTY_PARAMETER ) ) )
                     .build( );
         }
-        
+        </#if>
         Optional<${business_class.businessClass?cap_first}> opt${business_class.businessClass?cap_first} = ${business_class.businessClass?cap_first}Home.findByPrimaryKey( id );
         if ( !opt${business_class.businessClass?cap_first}.isPresent( ) )
         {

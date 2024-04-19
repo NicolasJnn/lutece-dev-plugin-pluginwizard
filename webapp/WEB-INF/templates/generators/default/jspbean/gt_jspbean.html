@@ -52,6 +52,7 @@ import fr.paris.lutece.portal.service.message.AdminMessageService;
 import fr.paris.lutece.portal.service.security.SecurityTokenService;
 import fr.paris.lutece.portal.service.admin.AccessDeniedException;
 import fr.paris.lutece.portal.service.util.AppException;
+import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.portal.util.mvc.admin.annotations.Controller;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
@@ -83,8 +84,12 @@ import fr.paris.lutece.plugins.${radicalPackage}.business.${business_class.busin
  * This class provides the user interface to manage ${business_class.businessClass} features ( manage, create, modify, remove )
  */
 @Controller( controllerJsp = "Manage${business_class.businessClass}s.jsp", controllerPath = "jsp/admin/plugins/${radicalPackage?replace(".","/")}/", right = "${feature_right}" )
-public class ${business_class.businessClass}JspBean extends Abstract${feature_name}JspBean <Integer, ${business_class.businessClass}>
+public class ${business_class.businessClass}JspBean extends AbstractPaginatorJspBean <Integer, ${business_class.businessClass}>
 {
+
+	// Rights
+	public static final String RIGHT_${feature_name?upper_case} = "${feature_right}";
+		
     // Templates
     private static final String TEMPLATE_MANAGE_${business_class.businessClass?upper_case}S = "/admin/plugins/${radicalPackage?replace(".","/")}/manage_${business_class.businessClass?lower_case}s.html";
     private static final String TEMPLATE_CREATE_${business_class.businessClass?upper_case} = "/admin/plugins/${radicalPackage?replace(".","/")}/create_${business_class.businessClass?lower_case}.html";
@@ -170,11 +175,11 @@ public class ${business_class.businessClass}JspBean extends Abstract${feature_na
             <#if attribute.type == "File">
 			if ( fil.get${attribute.name}( ) != null )
 			{
-				File file = fileStoreService.getFileMetaData( fil.get${attribute.name}( ).getFileKey( ) );
-				if ( file != null )
+				File localFile = fileStoreService.getFileMetaData( fil.get${attribute.name}( ).getFileKey( ) );
+				if ( localFile != null )
 				{
-					fil.set${attribute.name}( file );
-					String strFileUrl = fileStoreService.getFileDownloadUrlBO( file.getFileKey( ) );
+					fil.set${attribute.name}( localFile );
+					String strFileUrl = fileStoreService.getFileDownloadUrlBO( localFile.getFileKey( ) );
 					fil.get${attribute.name}( ).setUrl( strFileUrl );
 				}
 			}
@@ -187,6 +192,11 @@ public class ${business_class.businessClass}JspBean extends Abstract${feature_na
         return list${business_class.businessClass}.stream()
                  .sorted(Comparator.comparingInt( notif -> listIds.indexOf( notif.getId())))
                  .collect(Collectors.toList());
+	}
+	
+	@Override
+	int getPluginDefaultNumberOfItemPerPage( ) {
+		return AppPropertiesService.getPropertyInt( PROPERTY_DEFAULT_LIST_ITEM_PER_PAGE, 50 );
 	}
     
     /**
@@ -239,9 +249,9 @@ public class ${business_class.businessClass}JspBean extends Abstract${feature_na
             try
             {
                 String strFileStoreKey = fileStoreService.storeFileItem( ${attribute.paramName} );
-                File file = new File( );
-                file.setFileKey( strFileStoreKey );
-                _${business_class.businessClass?lower_case}.set${attribute.name}( file );
+                File localFile = new File( );
+                localFile.setFileKey( strFileStoreKey );
+                _${business_class.businessClass?lower_case}.set${attribute.name}( localFile );
             }
             catch (Exception e) 
             {
@@ -348,11 +358,11 @@ public class ${business_class.businessClass}JspBean extends Abstract${feature_na
         <#if attribute.type == "File">
 		if ( _${business_class.businessClass?lower_case}.get${attribute.name}( ) != null && StringUtils.isNotEmpty( _${business_class.businessClass?lower_case}.get${attribute.name}( ).getFileKey( ) ) )
 		{
-			File file = fileStoreService.getFileMetaData( _${business_class.businessClass?lower_case}.get${attribute.name}( ).getFileKey( ) );
-			if ( file != null )
+			File localFile = fileStoreService.getFileMetaData( _${business_class.businessClass?lower_case}.get${attribute.name}( ).getFileKey( ) );
+			if ( localFile != null )
 			{
-				_${business_class.businessClass?lower_case}.set${attribute.name}( file );
-				String strFileUrl = fileStoreService.getFileDownloadUrlBO( file.getFileKey( ) );
+				_${business_class.businessClass?lower_case}.set${attribute.name}( localFile );
+				String strFileUrl = fileStoreService.getFileDownloadUrlBO( localFile.getFileKey( ) );
 				_${business_class.businessClass?lower_case}.get${attribute.name}( ).setUrl( strFileUrl );
 			}
 		}
@@ -393,9 +403,9 @@ public class ${business_class.businessClass}JspBean extends Abstract${feature_na
             {
             	fileStoreService.delete( _${business_class.businessClass?lower_case}.get${attribute.name}( ).getFileKey( ) );
                 String strFileStoreKey = fileStoreService.storeFileItem( ${attribute.paramName} );
-                File file = new File( );
-                file.setFileKey( strFileStoreKey );
-                _${business_class.businessClass?lower_case}.set${attribute.name}( file );
+                File localFile = new File( );
+                localFile.setFileKey( strFileStoreKey );
+                _${business_class.businessClass?lower_case}.set${attribute.name}( localFile );
             }
             catch (Exception e) 
             {

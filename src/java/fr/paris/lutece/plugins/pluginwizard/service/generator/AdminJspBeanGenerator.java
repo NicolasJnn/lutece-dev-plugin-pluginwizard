@@ -51,7 +51,7 @@ public class AdminJspBeanGenerator extends AbstractGenerator
 {
     private static final String PATH_JAVA = "java/fr/paris/lutece/plugins/{plugin_name}/web/";
     private static final String PATH_KOTLIN = "kotlin/fr/paris/lutece/plugins/{plugin_name}/web/";
-    private static final String PREFIX_JSPBEAN = "Abstract";
+    private static final String PREFIX_JSPBEAN = "AbstractPaginator";
     private static final String PREFIX_JSPBEAN_PATH = "src/";
 
     private static final String SUFFIX_JAVA_EXTENSION = ".java";
@@ -90,15 +90,14 @@ public class AdminJspBeanGenerator extends AbstractGenerator
      */
     public Map<String, String> generate( PluginModel pm, String generationSchemeName )
     {
-        HashMap<String, String> map = new HashMap<>( );
-
+        HashMap<String, String> map = new HashMap<>( );      
+        String strFilesPath = ( isKotlin( ) ) ? PATH_KOTLIN : PATH_JAVA;
+        String strSuffix = SUFFIX_JSPBEAN_CLASS + ( ( isKotlin( ) ) ? SUFFIX_KOTLIN_EXTENSION : SUFFIX_JAVA_EXTENSION );
+        
         for ( Feature feature : pm.getFeatures( ) )
         {
-
             Collection<BusinessClass> listBusinessClasses = ModelService.getBusinessClassesByFeature( pm, feature.getId( ) );
 
-            String strSuffix = SUFFIX_JSPBEAN_CLASS + ( ( isKotlin( ) ) ? SUFFIX_KOTLIN_EXTENSION : SUFFIX_JAVA_EXTENSION );
-            String strFilesPath = ( isKotlin( ) ) ? PATH_KOTLIN : PATH_JAVA;
             if ( listBusinessClasses.isEmpty( ) )
             {
                 for ( AdminJspBeanFileConfig file : _listFiles )
@@ -127,11 +126,11 @@ public class AdminJspBeanGenerator extends AbstractGenerator
                     }
                 }
             }
-            String strPath = getFilePath( pm, PREFIX_JSPBEAN_PATH + strFilesPath, PREFIX_JSPBEAN + feature.getFeatureName( ) + strSuffix );
-            String strSourceCode = getAbstractJspBeanCode( pm, feature.getFeatureName( ), feature.getFeatureRight( ), pm.getPluginNameAsRadicalPackage( ),
-                    pm.getPluginName( ) );
-            map.put( strPath, strSourceCode );
         }
+        String strPath = getFilePath( pm, PREFIX_JSPBEAN_PATH + strFilesPath, PREFIX_JSPBEAN + strSuffix );
+        String strSourceCode = getAbstractJspBeanCode( pm, pm.getPluginNameAsRadicalPackage( ),
+                pm.getPluginName( ) );
+        map.put( strPath, strSourceCode );
 
         return map;
     }
@@ -157,7 +156,7 @@ public class AdminJspBeanGenerator extends AbstractGenerator
         model.put( Markers.MARK_BUSINESS_CLASS, business );
         model.put( Markers.MARK_FEATURE_NAME, strFeatureName );
         model.put( Markers.MARK_FEATURE_RIGHT, strFeatureRight );
-
+        
         model.put( Markers.MARK_RADICAL_PACKAGE, strRadicalPackage );
         model.put( Markers.MARK_BEAN_NAME, strBeanName );
 
@@ -184,7 +183,7 @@ public class AdminJspBeanGenerator extends AbstractGenerator
 
         model.put( Markers.MARK_FEATURE_NAME, strFeatureName );
         model.put( Markers.MARK_FEATURE_RIGHT, strFeatureRight );
-
+        
         model.put( Markers.MARK_RADICAL_PACKAGE, strRadicalPackage );
         model.put( Markers.MARK_BEAN_NAME, strBeanName );
 
@@ -202,12 +201,9 @@ public class AdminJspBeanGenerator extends AbstractGenerator
      *            The feature right
      * @return the template The source code of the Jsp Bean
      */
-    private String getAbstractJspBeanCode( PluginModel pm, String strFeatureName, String strFeatureRight, String strRadicalPackage, String strBeanName )
+    private String getAbstractJspBeanCode( PluginModel pm, String strRadicalPackage, String strBeanName )
     {
         Map<String, Object> model = getModel( pm );
-
-        model.put( Markers.MARK_FEATURE_NAME, strFeatureName );
-        model.put( Markers.MARK_FEATURE_RIGHT, strFeatureRight );
 
         model.put( Markers.MARK_RADICAL_PACKAGE, strRadicalPackage );
         model.put( Markers.MARK_BEAN_NAME, strBeanName );

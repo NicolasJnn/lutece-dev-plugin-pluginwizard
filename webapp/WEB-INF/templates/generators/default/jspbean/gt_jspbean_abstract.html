@@ -49,16 +49,13 @@ import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
-/**
- * ${feature_name} JSP Bean abstract class for JSP Bean
- */
-public abstract class Abstract${feature_name}JspBean <S, T> extends MVCAdminJspBean
+
+public abstract class AbstractPaginatorJspBean <S, T> extends MVCAdminJspBean
 {
-    // Rights
-    public static final String RIGHT_${feature_name?upper_case} = "${feature_right}";
     
     // Properties
-    private static final String PROPERTY_DEFAULT_LIST_ITEM_PER_PAGE = "${plugin_model.pluginName}.listItems.itemsPerPage";
+    protected static final String PROPERTY_DEFAULT_LIST_ITEM_PER_PAGE = "${plugin_model.pluginName}.listItems.itemsPerPage";
+    private static final int PROPERTY_DEFAULT_ITEM_PER_PAGE = 50;
     
     // Parameters
     private static final String PARAMETER_PAGE_INDEX = "page_index";
@@ -82,7 +79,7 @@ public abstract class Abstract${feature_name}JspBean <S, T> extends MVCAdminJspB
     protected <T> Map<String, Object> getPaginatedListModel( HttpServletRequest request, String strBookmark, List<S> list,
         String strManageJsp )
     {
-        int nDefaultItemsPerPage = AppPropertiesService.getPropertyInt( PROPERTY_DEFAULT_LIST_ITEM_PER_PAGE, 50 );
+        int nDefaultItemsPerPage = getPluginDefaultNumberOfItemPerPage( );
         _strCurrentPageIndex = AbstractPaginator.getPageIndex( request, AbstractPaginator.PARAMETER_PAGE_INDEX, _strCurrentPageIndex );
         _nItemsPerPage = AbstractPaginator.getItemsPerPage( request, AbstractPaginator.PARAMETER_ITEMS_PER_PAGE, _nItemsPerPage, nDefaultItemsPerPage );
 
@@ -112,4 +109,6 @@ public abstract class Abstract${feature_name}JspBean <S, T> extends MVCAdminJspB
      * @return the populated list of items corresponding to the id List
      */
      abstract  List<T> getItemsFromIds ( List<S> listIds ) ;
+     
+     int getPluginDefaultNumberOfItemPerPage( ) { return PROPERTY_DEFAULT_ITEM_PER_PAGE; } ;
 }

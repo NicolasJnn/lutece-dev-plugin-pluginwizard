@@ -9,7 +9,8 @@
 		byte[] fileContent = PluginWizardZipService.getInstance().exportZip(request);
 		if (fileContent != null)
 		{
-			String strFileName = "plugin.zip";
+			
+			String strFileName = "plugin-" + PluginWizardZipService.getInstance().getPluginName(request) + ".zip";
 			//the header and also the names set by which user will be prompted to save
 			response.setHeader("Content-Disposition", "attachment;filename=\"" + strFileName + "\"");
 			response.setContentType(application.getMimeType(strFileName));

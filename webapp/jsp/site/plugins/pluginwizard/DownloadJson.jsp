@@ -9,7 +9,7 @@
         byte[] fileContent = PluginWizardJsonService.getInstance().exportJson(request);
         if (fileContent != null)
         {
-            String strFileName = "model.json";
+            String strFileName = "model-" + PluginWizardJsonService.getInstance().getPluginName(request) + ".json";
             //the header and also the names set by which user will be prompted to save
             response.setHeader("Content-Disposition", "attachment;filename=\"" + strFileName + "\"");
             response.setContentType(application.getMimeType(strFileName));

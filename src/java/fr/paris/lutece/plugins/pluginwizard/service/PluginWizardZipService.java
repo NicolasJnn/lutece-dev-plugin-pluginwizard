@@ -126,4 +126,11 @@ public class PluginWizardZipService
 
         return fos.toByteArray( );
     }
+    
+    public String getPluginName( HttpServletRequest request ) {
+        String strPluginId = request.getParameter( PARAM_PLUGIN_ID );
+        int nPluginId = Integer.parseInt( strPluginId );
+    	PluginModel pluginModel = ModelService.getPluginModel( nPluginId );
+    	return pluginModel.isModule() ? pluginModel.getModuleName() : pluginModel.getPluginName();
+    }
 }

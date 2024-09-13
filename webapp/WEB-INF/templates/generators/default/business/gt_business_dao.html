@@ -58,13 +58,15 @@ import java.util.Optional;
 public final class ${business_class.businessClass}DAO implements I${business_class.businessClass}DAO
 {
     // Constants
-    private static final String SQL_QUERY_SELECT = "SELECT ${business_class.primaryKey}<#if business_class.attributes??>, <#list business_class.attributes as attribute>${attribute.attributeName}<#if attribute_has_next>, </#if></#list></#if> FROM ${business_class.businessTableName} WHERE ${business_class.primaryKey} = ?";
     private static final String SQL_QUERY_INSERT = "INSERT INTO ${business_class.businessTableName} ( <#if business_class.attributes??><#list business_class.attributes as attribute>${attribute.attributeName}<#if attribute_has_next>, </#if></#list></#if> ) VALUES ( <#if business_class.attributes??><#list business_class.attributes as attribute>?<#if attribute_has_next>, </#if></#list></#if> ) ";
     private static final String SQL_QUERY_DELETE = "DELETE FROM ${business_class.businessTableName} WHERE ${business_class.primaryKey} = ? ";
     private static final String SQL_QUERY_UPDATE = "UPDATE ${business_class.businessTableName} SET <#if business_class.attributes??><#list business_class.attributes as attribute>${attribute.attributeName} = ?<#if attribute_has_next>, </#if></#list></#if> WHERE ${business_class.primaryKey} = ?";
-    private static final String SQL_QUERY_SELECTALL = "SELECT ${business_class.primaryKey}<#if business_class.attributes??>, <#list business_class.attributes as attribute>${attribute.attributeName}<#if attribute_has_next>, </#if></#list></#if> FROM ${business_class.businessTableName}";
+   
+	private static final String SQL_QUERY_SELECTALL = "SELECT ${business_class.primaryKey}<#if business_class.attributes??>, <#list business_class.attributes as attribute>${attribute.attributeName}<#if attribute_has_next>, </#if></#list></#if> FROM ${business_class.businessTableName}";
     private static final String SQL_QUERY_SELECTALL_ID = "SELECT ${business_class.primaryKey} FROM ${business_class.businessTableName}";
-    private static final String SQL_QUERY_SELECTALL_BY_IDS = "SELECT ${business_class.primaryKey}<#if business_class.attributes??>, <#list business_class.attributes as attribute>${attribute.attributeName}<#if attribute_has_next>, </#if></#list></#if> FROM ${business_class.businessTableName} WHERE ${business_class.primaryKey} IN (  ";
+
+    private static final String SQL_QUERY_SELECTALL_BY_IDS = SQL_QUERY_SELECTALL + " WHERE ${business_class.primaryKey} IN (  ";
+	private static final String SQL_QUERY_SELECT_BY_ID = SQL_QUERY_SELECTALL + " WHERE ${business_class.primaryKey} = ?";
 
     /**
      * {@inheritDoc }
@@ -105,7 +107,7 @@ public final class ${business_class.businessClass}DAO implements I${business_cla
     @Override
     public Optional<${business_class.businessClass}> load( int nKey, Plugin plugin )
     {
-        try( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT, plugin ) )
+        try( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_ID, plugin ) )
         {
 	        daoUtil.setInt( 1 , nKey );
 	        daoUtil.executeQuery( );
@@ -113,29 +115,7 @@ public final class ${business_class.businessClass}DAO implements I${business_cla
 	
 	        if ( daoUtil.next( ) )
 	        {
-	            ${business_class.instanceName} = new ${business_class.businessClass}();
-	            int nIndex = 1;
-	            
-	            ${business_class.instanceName}.setId( daoUtil.getInt( nIndex++ ) );
-	            <#list business_class.attributes as attribute>
-	            <#if attribute_has_next>
-	            <#if attribute.type == "File">
-	            File ${attribute.variableName} = new File();
-	            ${attribute.variableName}.setFileKey( daoUtil.getString( nIndex++ ) );
-	            ${business_class.instanceName}.set${attribute.name}( ${attribute.variableName} );
-			    <#else>
-			    ${business_class.instanceName}.set${attribute.name}( daoUtil.get${attribute.type?cap_first}( nIndex++ ) );
-			    </#if>
-	            <#else>
-	            <#if attribute.type == "File">
-	            File ${attribute.variableName} = new File();
-	            ${attribute.variableName}.setFileKey( daoUtil.getString( nIndex ) );
-	            ${business_class.instanceName}.set${attribute.name}( ${attribute.variableName} );
-			    <#else>
-			    ${business_class.instanceName}.set${attribute.name}( daoUtil.get${attribute.type?cap_first}( nIndex ) );
-			    </#if>         
-	            </#if>
-	            </#list>
+	            ${business_class.instanceName} = loadFromDaoUtil( daoUtil );
 	        }
 	
 	        return Optional.ofNullable( ${business_class.instanceName} );
@@ -198,31 +178,7 @@ public final class ${business_class.businessClass}DAO implements I${business_cla
 	
 	        while ( daoUtil.next(  ) )
 	        {
-	            ${business_class.businessClass} ${business_class.instanceName} = new ${business_class.businessClass}(  );
-	            int nIndex = 1;
-	            
-	            ${business_class.instanceName}.setId( daoUtil.getInt( nIndex++ ) );
-	            <#list business_class.attributes as attribute>
-	            <#if attribute_has_next>
-	            <#if attribute.type == "File">
-	            File ${attribute.variableName} = new File();
-	            ${attribute.variableName}.setFileKey( daoUtil.getString( nIndex++ ) );
-	            ${business_class.instanceName}.set${attribute.name}( ${attribute.variableName} );
-			    <#else>
-			    ${business_class.instanceName}.set${attribute.name}( daoUtil.get${attribute.type?cap_first}( nIndex++ ) );
-			    </#if>
-	            <#else>
-	            <#if attribute.type == "File">
-	            File ${attribute.variableName} = new File();
-	            ${attribute.variableName}.setFileKey( daoUtil.getString( nIndex ) );
-	            ${business_class.instanceName}.set${attribute.name}( ${attribute.variableName} );
-			    <#else>
-			    ${business_class.instanceName}.set${attribute.name}( daoUtil.get${attribute.type?cap_first}( nIndex ) );
-			    </#if>         
-	            </#if>
-	            </#list>
-	
-	            ${business_class.instanceName}List.add( ${business_class.instanceName} );
+				${business_class.instanceName}List.add( loadFromDaoUtil( daoUtil ) );
 	        }
 	
 	        return ${business_class.instanceName}List;
@@ -298,38 +254,41 @@ public final class ${business_class.businessClass}DAO implements I${business_cla
 	        	daoUtil.executeQuery(  );
 	        	while ( daoUtil.next(  ) )
 		        {
-		        	${business_class.businessClass} ${business_class.instanceName} = new ${business_class.businessClass}(  );
-		            int nIndex = 1;
-		            
-		            ${business_class.instanceName}.setId( daoUtil.getInt( nIndex++ ) );
-		            <#list business_class.attributes as attribute>
-		            <#if attribute_has_next>
-		            <#if attribute.type == "File">
-		            File ${attribute.variableName} = new File();
-		            ${attribute.variableName}.setFileKey( daoUtil.getString( nIndex++ ) );
-		            ${business_class.instanceName}.set${attribute.name}( ${attribute.variableName} );
-				    <#else>
-				    ${business_class.instanceName}.set${attribute.name}( daoUtil.get${attribute.type?cap_first}( nIndex++ ) );
-				    </#if>
-		            <#else>
-		            <#if attribute.type == "File">
-		            File ${attribute.variableName} = new File();
-		            ${attribute.variableName}.setFileKey( daoUtil.getString( nIndex ) );
-		            ${business_class.instanceName}.set${attribute.name}( ${attribute.variableName} );
-				    <#else>
-				    ${business_class.instanceName}.set${attribute.name}( daoUtil.get${attribute.type?cap_first}( nIndex ) );
-				    </#if>         
-		            </#if>
-		            </#list>
-		            
-		            ${business_class.instanceName}List.add( ${business_class.instanceName} );
+		            ${business_class.instanceName}List.add( loadFromDaoUtil( daoUtil ) );
 		        }
-		
-		        daoUtil.free( );
-		        
 	        }
 	    }
 		return ${business_class.instanceName}List;
 		
+	}
+
+
+	private ${business_class.businessClass} loadFromDaoUtil (DAOUtil daoUtil) {
+		
+		${business_class.businessClass} ${business_class.instanceName} = new ${business_class.businessClass}(  );
+		int nIndex = 1;
+		
+		${business_class.instanceName}.setId( daoUtil.getInt( nIndex++ ) );
+		<#list business_class.attributes as attribute>
+		<#if attribute_has_next>
+		<#if attribute.type == "File">
+		File ${attribute.variableName} = new File();
+		${attribute.variableName}.setFileKey( daoUtil.getString( nIndex++ ) );
+		${business_class.instanceName}.set${attribute.name}( ${attribute.variableName} );
+		<#else>
+		${business_class.instanceName}.set${attribute.name}( daoUtil.get${attribute.type?cap_first}( nIndex++ ) );
+		</#if>
+		<#else>
+		<#if attribute.type == "File">
+		File ${attribute.variableName} = new File();
+		${attribute.variableName}.setFileKey( daoUtil.getString( nIndex ) );
+		${business_class.instanceName}.set${attribute.name}( ${attribute.variableName} );
+		<#else>
+		${business_class.instanceName}.set${attribute.name}( daoUtil.get${attribute.type?cap_first}( nIndex ) );
+		</#if>         
+		</#if>
+		</#list>
+		
+		return ${business_class.instanceName};
 	}
 }

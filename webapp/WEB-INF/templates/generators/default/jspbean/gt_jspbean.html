@@ -175,13 +175,21 @@ public class ${business_class.businessClass}JspBean extends AbstractPaginatorJsp
             <#if attribute.type == "File">
 			if ( fil.get${attribute.name}( ) != null )
 			{
-				File localFile = fileStoreService.getFileMetaData( fil.get${attribute.name}( ).getFileKey( ) );
-				if ( localFile != null )
+			try
 				{
-					fil.set${attribute.name}( localFile );
-					String strFileUrl = fileStoreService.getFileDownloadUrlBO( localFile.getFileKey( ) );
-					fil.get${attribute.name}( ).setUrl( strFileUrl );
+					File localFile = fileStoreService.getFileMetaData( fil.get${attribute.name}( ).getFileKey( ) );
+					if ( localFile != null )
+					{
+						fil.set${attribute.name}( localFile );
+						String strFileUrl = fileStoreService.getFileDownloadUrlBO( localFile.getFileKey( ) );
+						fil.get${attribute.name}( ).setUrl( strFileUrl );
+					}
 				}
+	            catch (Exception e) 
+	            {
+	            	AppLogService.error( e );
+	            	throw new AppException(e.getMessage(), e);
+	            }
 			}
 		    </#if>
             </#list>
@@ -322,7 +330,15 @@ public class ${business_class.businessClass}JspBean extends AbstractPaginatorJsp
 	    <#if attribute.type == "File">
 	    if ( _${business_class.businessClass?lower_case}.get${attribute.name}( ) != null && StringUtils.isNotEmpty( _${business_class.businessClass?lower_case}.get${attribute.name}( ).getFileKey( ) ) )
 	    {
-        	fileStoreService.delete( _${business_class.businessClass?lower_case}.get${attribute.name}( ).getFileKey( ) );
+	    	try
+	        {
+        		fileStoreService.delete( _${business_class.businessClass?lower_case}.get${attribute.name}( ).getFileKey( ) );
+        	}
+            catch (Exception e) 
+            {
+            	AppLogService.error( e );
+            	throw new AppException(e.getMessage(), e);
+            }
         }
 	    </#if>
 		</#list>
@@ -358,13 +374,21 @@ public class ${business_class.businessClass}JspBean extends AbstractPaginatorJsp
         <#if attribute.type == "File">
 		if ( _${business_class.businessClass?lower_case}.get${attribute.name}( ) != null && StringUtils.isNotEmpty( _${business_class.businessClass?lower_case}.get${attribute.name}( ).getFileKey( ) ) )
 		{
-			File localFile = fileStoreService.getFileMetaData( _${business_class.businessClass?lower_case}.get${attribute.name}( ).getFileKey( ) );
-			if ( localFile != null )
-			{
-				_${business_class.businessClass?lower_case}.set${attribute.name}( localFile );
-				String strFileUrl = fileStoreService.getFileDownloadUrlBO( localFile.getFileKey( ) );
-				_${business_class.businessClass?lower_case}.get${attribute.name}( ).setUrl( strFileUrl );
+			try
+            {
+				File localFile = fileStoreService.getFileMetaData( _${business_class.businessClass?lower_case}.get${attribute.name}( ).getFileKey( ) );
+				if ( localFile != null )
+				{
+					_${business_class.businessClass?lower_case}.set${attribute.name}( localFile );
+					String strFileUrl = fileStoreService.getFileDownloadUrlBO( localFile.getFileKey( ) );
+					_${business_class.businessClass?lower_case}.get${attribute.name}( ).setUrl( strFileUrl );
+				}
 			}
+            catch (Exception e) 
+            {
+            	AppLogService.error( e );
+            	throw new AppException(e.getMessage(), e);
+            }
 		}
 	    </#if>
         </#list>

@@ -14,7 +14,7 @@
 </#if>
 
 <${macro}box>
-	<${macro}boxHeader title='${i18n_open}${plugin_name}.modify_${business_class.businessClass?lower_case}.title${i18n_close}' />
+	<${macro}boxHeader title='${i18n_open}${plugin_name}.create_${business_class.businessClass?lower_case}.title${i18n_close}' />
 	<${macro}boxBody>
 		<${macro}tform class='form-horizontal' action='jsp/site/Portal.jsp' <#if hasFile?? && hasFile>enctype="multipart/form-data"</#if>>
 				<${macro}messages errors=errors />
@@ -23,7 +23,7 @@
 				<${macro}input type="hidden" name="page" value="${business_class.businessClass?lower_case}" /> 
 
 				<#list business_class.attributes as attribute>
-          		<${macro}formGroup labelFor='${attribute.paramName}' labelKey='${i18n_open}${plugin_name}.create_${business_class.businessClass?lower_case}.label${attribute.name}${i18n_close}' helpKey='${i18n_open}${plugin_name}.create_${business_class.businessClass?lower_case}.label${attribute.name}.help${i18n_close}' mandatory=true>
+          		<${macro}formGroup labelFor='${attribute.paramName}' labelKey='${i18n_open}${plugin_name}.${business_class.businessClass?lower_case}.label${attribute.name}${i18n_close}' helpKey='${i18n_open}${plugin_name}.${business_class.businessClass?lower_case}.label${attribute.name}.help${i18n_close}' mandatory=true>
 				<#if attribute.typeDescription = "File">
           			<${macro}input type='file' id='${attribute.paramName}' name='${attribute.paramName}' <#if attribute.maxLength &gt; 0> maxlength=${attribute.maxLength}</#if> value='${bra_open}${business_class.businessClass?lower_case}.${attribute.name?uncap_first}!\'\'${bra_close}' tabIndex='${attribute_index}' />
 				<#elseif attribute.type = "boolean">
@@ -58,7 +58,7 @@
 				<${macro}input type="hidden" name="page" value="${business_class.businessClass?lower_case}" /> 
 
 				<#list business_class.attributes as attribute>
-				<${macro}formGroup labelFor='${attribute.paramName}' labelKey='${i18n_open}${plugin_name}.modify_${business_class.businessClass?lower_case}.label${attribute.name}${i18n_close}' <#if attribute.type != "File">mandatory=true</#if>>
+				<${macro}formGroup labelFor='${attribute.paramName}' labelKey='${i18n_open}${plugin_name}.${business_class.businessClass?lower_case}.label${attribute.name}${i18n_close}' <#if attribute.type != "File">mandatory=true</#if>>
           		<#if attribute.typeDescription = "File">	
 	          		<${macro}input type='file' id="${attribute.paramName}" name="${attribute.paramName}" tabIndex="${attribute_index}" showFileUrl=true fileURL="${bra_open}${business_class.businessClass?lower_case}.${attribute.name?uncap_first}.url!${bra_close}" fileName="${bra_open}${business_class.businessClass?lower_case}.${attribute.name?uncap_first}.title!${bra_close}" value="${bra_open}${business_class.businessClass?lower_case}.${attribute.name?uncap_first}.fileKey!\'\'}" />
 				<#elseif attribute.type = "boolean">
